@@ -12,7 +12,7 @@ def main():
 
     # Constants
     WIDTH, HEIGHT = 1000, 800
-    FPS = 60
+    FPS = 240
 
     # Create the game window
     win = pygame.display.set_mode((WIDTH, HEIGHT))

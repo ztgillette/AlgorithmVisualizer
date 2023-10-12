@@ -89,7 +89,7 @@ class Cell:
         deltax = abs(parent.xcoor - self.xcoor)
         deltay = abs(parent.ycoor - self.ycoor)
 
-        self.gcost += (deltax + deltay)
+        self.gcost = parent.gcost + (deltax + deltay)
 
     def calculateHCost(self, goal):
         #heuristic is simply diagonal path length
