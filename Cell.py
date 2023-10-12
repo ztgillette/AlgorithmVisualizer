@@ -35,11 +35,11 @@ class Cell:
         if not self.start and not self.goal:
             
             if(self.currColor == self.mainColor) and not self.recentlyClicked:
-                self.currColor = self.altColor
-                self.wall = True
+                self.makeWall()
+                print("walled!!")
             elif not self.recentlyClicked and not held:
-                self.currColor = self.mainColor
-                self.wall = False
+                self.makeEmpty()
+                print("destroyed")
 
             self.recentlyClicked = True
 

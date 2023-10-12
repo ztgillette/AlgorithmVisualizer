@@ -4,5 +4,9 @@ RED = (255,0,0)
 GRAY = (200,200,200)
 DARK_GRAY = (100,100,100)
 GREEN = (0,255,0)
-PURPLE = (120,255,255)
+
+#neighbors
+PURPLE = (0,0,255)
+
+#current cell
 YELLOW = (255, 255, 0)

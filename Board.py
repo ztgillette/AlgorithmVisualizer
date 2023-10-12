@@ -20,6 +20,7 @@ class Board:
         self.edgeColor = edgeColor
         self.mouseX = 0
         self.moseY = 0
+        self.speed = 0.1
 
         #cell list
         self.cell = []
@@ -120,7 +121,7 @@ class Board:
         cellx = cell.xcoor
         celly = cell.ycoor
 
-        if cellx + deltax >= 0 and cellx + deltax < self.numHorizontalCells and celly + deltay >= 0 and celly + deltay < self.numVerticalCells and cell.wall == False and cell.currColor != cell.altColor:
+        if cellx + deltax >= 0 and cellx + deltax < self.numHorizontalCells and celly + deltay >= 0 and celly + deltay < self.numVerticalCells and self.cell[cellx+deltax][celly+deltay].wall == False:
             return True
         return False
 
@@ -189,7 +190,7 @@ class Board:
                 p.setColor(GREEN)
 
         #wait a bit
-        time.sleep(0.001)
+        time.sleep(self.speed)
 
     def undrawAlgorithm(self):
 
