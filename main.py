@@ -22,9 +22,12 @@ def main():
     board = Board(win, 800, 800, 20, 20, GRAY)
 
     # buttons
-    resetButton = Button(win, board.resetCells, 825, 25, 150, 50, "Reset")
-    randomBoardButton = Button(win, board.fillRandom, 825, 100, 150, 50, "Randomize")
-    playpauseButton = Button(win, board.playpause, 825, 175, 150, 50, "Play / Pause")
+    buttons = []
+    buttons.append(Button(win, board.resetCells, 825, 25, 150, 50, "Reset"))
+    buttons.append(Button(win, board.fillRandom, 825, 100, 150, 50, "Randomize"))
+    buttons.append(Button(win, board.playpause, 825, 175, 150, 50, "Play / Pause"))
+    buttons.append(Button(win, board.setBFS, 825, 275, 150, 50, "BFS", board))
+    buttons.append(Button(win, board.setDFS, 825, 350, 150, 50, "DFS", board))
 
     # Main game loop
     run = True
@@ -38,9 +41,8 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mosx, mosy = event.pos
                 board.detectMouseClick(mosx,mosy)
-                resetButton.detectMouseClick(mosx, mosy)
-                randomBoardButton.detectMouseClick(mosx, mosy)
-                playpauseButton.detectMouseClick(mosx, mosy)
+                for button in buttons:
+                    button.detectMouseClick(mosx, mosy)
                 
             elif event.type == pygame.MOUSEBUTTONUP:
                 board.detectMouseUnclick()
@@ -56,13 +58,16 @@ def main():
         
         # Draw game objects here
         # ...
-        board = board.algorithm.DFS(board);
+        if board.algo == "BFS":
+            board = board.algorithm.BFS(board);
+        elif board.algo == "DFS":
+            board = board.algorithm.DFS(board);
         board.draw()
 
         #draw buttons
-        resetButton.draw()
-        randomBoardButton.draw()
-        playpauseButton.draw()
+        for button in buttons:
+            button.draw()
+        pygame.draw.rect(win, BLACK, (825, 250, 150, 3)) #dividing line
 
         # Update the display
         pygame.display.update()

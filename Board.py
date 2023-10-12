@@ -43,6 +43,7 @@ class Board:
         self.start.makeStart()
         self.goal.makeGoal()
         self.algorithm = Algorithms()
+        self.algo = "BFS"
         self.currentCell = None
         self.visitedCells = []
         self.celllist = []
@@ -223,6 +224,12 @@ class Board:
             self.paused = True
             self.running = False
             self.started = False
+    
+    def setBFS(self):
+        self.algo = "BFS"
+
+    def setDFS(self):
+        self.algo = "DFS"
 
     
 
