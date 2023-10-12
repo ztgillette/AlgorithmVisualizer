@@ -10,7 +10,8 @@ class Button:
         self.height = height
         self.color = GRAY
         self.window = window
-        self.font = pygame.font.SysFont('Arial', 24)
+        self.fontsize = int(width / 6)
+        self.font = pygame.font.SysFont('Arial', self.fontsize)
         self.buttontext = buttontext
         self.text = self.font.render(self.buttontext, True, BLACK)
         self.function = function

@@ -21,7 +21,8 @@ class Board:
         self.edgeColor = edgeColor
         self.mouseX = 0
         self.moseY = 0
-        self.speed = 0.001
+        self.clockcounter = 0
+        self.clockmax = 60
 
         #cell list
         self.cell = []
@@ -119,6 +120,8 @@ class Board:
                 self.cell[i][j].reset()
 
     def fillRandom(self):
+        self.resetCells()
+        self.resetAlgorithm()
         for i in range(self.numHorizontalCells):
             for j in range(self.numVerticalCells):
                 random_float = random.random()
@@ -171,7 +174,7 @@ class Board:
 
         return neighbors
         
-    def resetAlgorithm(self, algorithm):
+    def resetAlgorithm(self, algorithm=Algorithms()):
         self.algorithm = Algorithms()
         self.currentCell = None
         self.visitedCells = []
@@ -200,9 +203,6 @@ class Board:
             if p!= self.start and p!=self.goal and p!=None:
                 p.setColor(GREEN)
 
-        #wait a bit
-        time.sleep(self.speed)
-
     def undrawAlgorithm(self):
 
         #reset colors
@@ -230,6 +230,21 @@ class Board:
 
     def setDFS(self):
         self.algo = "DFS"
+
+    def setASTAR(self):
+        self.algo = "A*"
+
+    def speedup(self):
+        if(self.clockmax > 5):
+            self.clockmax -= 5
+        else:
+            self.clockmax = 1
+
+    def slowdown(self):
+        if(self.clockmax == 1):
+            self.clockmax = 5
+        elif(self.clockmax < 175):
+            self.clockmax += 5
 
     
 

@@ -1,5 +1,6 @@
 import pygame
 from Colors import *
+import math
 
 class Cell:
     def __init__(self, window, x=0, y=0, width=20, height=20, color=WHITE):
@@ -26,6 +27,9 @@ class Cell:
         self.wall = False
         self.start = False
         self.goal = False
+        self.hcost = 0
+        self.gcost = 0
+        self.fcost = 0
 
     def draw(self):
         pygame.draw.rect(self.window, self.currColor, (self.x+1, self.y+1, self.width-2, self.height-2))
@@ -51,6 +55,9 @@ class Cell:
             self.currColor = self.mainColor
             self.recentlyClicked = False
             self.wall = False
+            self.hcost = 0
+            self.gcost = 0
+            self.fcost = 0
 
     def makeWall(self):
         if not self.start and not self.goal:
@@ -75,6 +82,26 @@ class Cell:
 
     def resetColor(self):
         self.currColor = self.mainColor
+
+    def calculateGCost(self, parent):
+
+        #calculate distance from parent
+        deltax = abs(parent.xcoor - self.xcoor)
+        deltay = abs(parent.ycoor - self.ycoor)
+
+        self.gcost += (deltax + deltay)
+
+    def calculateHCost(self, goal):
+        #heuristic is simply diagonal path length
+        #a^2 + b^2 = c^2
+        deltax = abs(self.xcoor-goal.xcoor)
+        deltay = abs(self.ycoor-goal.ycoor)
+
+        self.hcost = math.sqrt(deltax*deltax + deltay*deltay)
+
+    def calculateFCost(self):
+        self.fcost = self.hcost + self.gcost
+
 
 class Node(Cell):
     def __init__(self, window, x=0, y=0, width=20, height=20, color=WHITE):
