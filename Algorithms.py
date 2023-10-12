@@ -21,7 +21,7 @@ class Algorithms:
                         board.parentCells[board.currentCell] = None
                         self.started = True
                         board.started = False
-                        
+
 
                     # generic iteration
                     if(len(board.celllist)>0):
@@ -43,6 +43,9 @@ class Algorithms:
                                 board.celllist.append(n)
                                 board.parentCells[n] = board.currentCell
                                 board.visitedCells.append(n)
+
+                    else:
+                        print("no possible path")
 
                 
 

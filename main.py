@@ -24,11 +24,7 @@ def main():
     # buttons
     resetButton = Button(win, board.resetCells, 825, 50, 150, 50, "Reset")
     randomBoardButton = Button(win, board.fillRandom, 825, 125, 150, 50, "Randomize")
-    startButton = Button(win, board.resume, 825, 200, 150, 50, "Start")
-    pauseButton = Button(win, board.pause, 825, 275, 150, 50, "Pause")
-
-    # algorithm
-    algo = Algorithms()
+    playpauseButton = Button(win, board.playpause, 825, 200, 150, 50, "Play / Pause")
 
     # Main game loop
     run = True
@@ -44,8 +40,8 @@ def main():
                 board.detectMouseClick(mosx,mosy)
                 resetButton.detectMouseClick(mosx, mosy)
                 randomBoardButton.detectMouseClick(mosx, mosy)
-                startButton.detectMouseClick(mosx, mosy)
-                pauseButton.detectMouseClick(mosx, mosy)
+                playpauseButton.detectMouseClick(mosx, mosy)
+                
             elif event.type == pygame.MOUSEBUTTONUP:
                 board.detectMouseUnclick()
                 
@@ -60,14 +56,13 @@ def main():
         
         # Draw game objects here
         # ...
-        board = algo.BFS(board)
+        board = board.algorithm.BFS(board);
         board.draw()
 
         #draw buttons
         resetButton.draw()
         randomBoardButton.draw()
-        startButton.draw()
-        pauseButton.draw()
+        playpauseButton.draw()
 
         # Update the display
         pygame.display.update()

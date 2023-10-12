@@ -1,6 +1,7 @@
 import random
 import time
 from Cell import *
+from Algorithms import *
 
 
 class Board:
@@ -20,7 +21,7 @@ class Board:
         self.edgeColor = edgeColor
         self.mouseX = 0
         self.moseY = 0
-        self.speed = 0.1
+        self.speed = 0.001
 
         #cell list
         self.cell = []
@@ -41,7 +42,7 @@ class Board:
         self.goal = self.cell[numXCells-1][numYCells-1]
         self.start.makeStart()
         self.goal.makeGoal()
-        self.algorithm = None
+        self.algorithm = Algorithms()
         self.currentCell = None
         self.visitedCells = []
         self.celllist = []
@@ -52,6 +53,8 @@ class Board:
         self.running = False
         self.live = False
         self.started = False
+        self.allowDiagonals = False
+        self.paused = True
 
     def draw(self):
         self.window.fill(self.edgeColor)
@@ -133,13 +136,13 @@ class Board:
         y = cell.ycoor
 
         #top left
-        if self.checkValidCell(cell, -1, -1):
+        if self.checkValidCell(cell, -1, -1) and self.allowDiagonals:
             neighbors.append(self.cell[x-1][y-1])
         #top middle
         if self.checkValidCell(cell, 0, -1):
             neighbors.append(self.cell[x][y-1])
         #top right
-        if self.checkValidCell(cell, 1, -1):
+        if self.checkValidCell(cell, 1, -1) and self.allowDiagonals:
             neighbors.append(self.cell[x+1][y-1])
         #middle left
         if self.checkValidCell(cell, -1, 0):
@@ -148,13 +151,13 @@ class Board:
         if self.checkValidCell(cell, 1, 0):
             neighbors.append(self.cell[x+1][y])
         #bottom left
-        if self.checkValidCell(cell, -1, 1):
+        if self.checkValidCell(cell, -1, 1) and self.allowDiagonals:
             neighbors.append(self.cell[x-1][y+1])
         #bottom center
         if self.checkValidCell(cell, 0, 1):
             neighbors.append(self.cell[x][y+1])
         #bottom right
-        if self.checkValidCell(cell, 1, 1):
+        if self.checkValidCell(cell, 1, 1) and self.allowDiagonals:
             neighbors.append(self.cell[x+1][y+1])
 
         print("num neighbors: " + str(len(neighbors)))
@@ -162,7 +165,7 @@ class Board:
         return neighbors
         
     def resetAlgorithm(self, algorithm):
-        self.algorithm = algorithm
+        self.algorithm = Algorithms()
         self.currentCell = None
         self.visitedCells = []
         self.celllist = []
@@ -172,6 +175,7 @@ class Board:
         self.backtrack = None
         self.running = False
         self.live = False
+        self.started
 
     def changeAlgorithm(self, algorithm):
         self.algorithm = algorithm
@@ -202,14 +206,17 @@ class Board:
             if n!= self.start and n!=self.goal and n!=None:
                 n.resetColor()
         
-    def resume(self):
-        self.running = True
-        self.live = True
-        self.started = True
+    def playpause(self):
 
-    def pause(self):
-        self.running = False
-        self.started = False
+        if(self.paused):
+            self.paused = False
+            self.running = True
+            self.live = True
+            self.started = True
+        else:
+            self.paused = True
+            self.running = False
+            self.started = False
 
     
 
