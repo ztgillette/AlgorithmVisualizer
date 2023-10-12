@@ -1,4 +1,4 @@
-from abc import abstractmethod
+import random
 from Cell import *
 
 
@@ -32,9 +32,13 @@ class Board:
 
         #board editing
         self.mousePressed = False
+        self.howRandom = 0.7
                 
-
         #algorithm variables
+        self.start = self.cell[0][0]
+        self.goal = self.cell[numXCells-1][numYCells-1]
+        self.start.makeStart()
+        self.goal.makeGoal()
 
     def draw(self):
         self.window.fill(self.edgeColor)
@@ -46,7 +50,6 @@ class Board:
         x, y = pygame.mouse.get_pos()
     
         # Display mouse coordinates in window title
-        pygame.display.set_caption(f"Mouse Coordinates: ({x}, {y})")
 
         self.mouseX = x
         self.mouseY = y
@@ -79,7 +82,20 @@ class Board:
         for i in range(self.numHorizontalCells):
             for j in range(self.numVerticalCells):
                 self.cell[i][j].refresh()
-     
+
+    def resetCells(self):
+        for i in range(self.numHorizontalCells):
+            for j in range(self.numVerticalCells):
+                self.cell[i][j].reset()
+
+    def fillRandom(self):
+        for i in range(self.numHorizontalCells):
+            for j in range(self.numVerticalCells):
+                random_float = random.random()
+                if(random_float > self.howRandom):
+                    self.cell[i][j].makeWall()
+                else:
+                    self.cell[i][j].makeEmpty()
 
     
     

@@ -2,6 +2,7 @@ import pygame
 import sys
 from Colors import *
 from Board import *
+from Button import *
 
 def main():
 
@@ -9,7 +10,7 @@ def main():
     pygame.init()
 
     # Constants
-    WIDTH, HEIGHT = 800, 800
+    WIDTH, HEIGHT = 1000, 800
     FPS = 60
 
     # Create the game window
@@ -17,10 +18,11 @@ def main():
     pygame.display.set_caption("Algorithm Visualizer")
 
     # Load game assets (if any)
-    board = Board(win, WIDTH, HEIGHT, 20, 20, GRAY)
+    board = Board(win, 800, 800, 20, 20, GRAY)
 
-    # Game Variables
-    # ...
+    # buttons
+    resetButton = Button(win, board.resetCells, 825, 50, 150, 50, "Reset")
+    randomBoardButton = Button(win, board.fillRandom, 825, 125, 150, 50, "Randomize")
 
     # Main game loop
     run = True
@@ -34,6 +36,8 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mosx, mosy = event.pos
                 board.detectMouseClick(mosx,mosy)
+                resetButton.detectMouseClick(mosx, mosy)
+                randomBoardButton.detectMouseClick(mosx, mosy)
             elif event.type == pygame.MOUSEBUTTONUP:
                 board.detectMouseUnclick()
                 
@@ -49,6 +53,11 @@ def main():
         # Draw game objects here
         # ...
         board.draw()
+
+        #draw buttons
+        resetButton.draw()
+        randomBoardButton.draw()
+
         # Update the display
         pygame.display.update()
         
