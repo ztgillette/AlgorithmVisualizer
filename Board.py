@@ -1,4 +1,5 @@
 import random
+import time
 from Cell import *
 
 
@@ -39,12 +40,29 @@ class Board:
         self.goal = self.cell[numXCells-1][numYCells-1]
         self.start.makeStart()
         self.goal.makeGoal()
+        self.algorithm = None
+        self.currentCell = None
+        self.visitedCells = []
+        self.celllist = []
+        self.neighbors = []
+        self.parentCells = {}
+        self.path = []
+        self.backtrack = None
+        self.running = False
+        self.live = False
+        self.started = False
 
     def draw(self):
         self.window.fill(self.edgeColor)
+        if self.live:
+            self.drawAlgorithm()
         for i in range(self.numHorizontalCells):
             for j in range(self.numVerticalCells):
                 self.cell[i][j].draw()
+        if self.live:
+            self.undrawAlgorithm()
+        
+        
 
     def detectMouseHover(self):
         x, y = pygame.mouse.get_pos()
@@ -84,6 +102,7 @@ class Board:
                 self.cell[i][j].refresh()
 
     def resetCells(self):
+        self.resetAlgorithm(self.algorithm)
         for i in range(self.numHorizontalCells):
             for j in range(self.numVerticalCells):
                 self.cell[i][j].reset()
@@ -96,8 +115,101 @@ class Board:
                     self.cell[i][j].makeWall()
                 else:
                     self.cell[i][j].makeEmpty()
+    
+    def checkValidCell(self, cell, deltax, deltay):
+        cellx = cell.xcoor
+        celly = cell.ycoor
+
+        if cellx + deltax >= 0 and cellx + deltax < self.numHorizontalCells and celly + deltay >= 0 and celly + deltay < self.numVerticalCells and cell.wall == False and cell.currColor != cell.altColor:
+            return True
+        return False
 
     
+    def getNeighbors(self, cell):
+
+        neighbors = []
+        x = cell.xcoor
+        y = cell.ycoor
+
+        #top left
+        if self.checkValidCell(cell, -1, -1):
+            neighbors.append(self.cell[x-1][y-1])
+        #top middle
+        if self.checkValidCell(cell, 0, -1):
+            neighbors.append(self.cell[x][y-1])
+        #top right
+        if self.checkValidCell(cell, 1, -1):
+            neighbors.append(self.cell[x+1][y-1])
+        #middle left
+        if self.checkValidCell(cell, -1, 0):
+            neighbors.append(self.cell[x-1][y])
+        #middle right
+        if self.checkValidCell(cell, 1, 0):
+            neighbors.append(self.cell[x+1][y])
+        #bottom left
+        if self.checkValidCell(cell, -1, 1):
+            neighbors.append(self.cell[x-1][y+1])
+        #bottom center
+        if self.checkValidCell(cell, 0, 1):
+            neighbors.append(self.cell[x][y+1])
+        #bottom right
+        if self.checkValidCell(cell, 1, 1):
+            neighbors.append(self.cell[x+1][y+1])
+
+        print("num neighbors: " + str(len(neighbors)))
+
+        return neighbors
+        
+    def resetAlgorithm(self, algorithm):
+        self.algorithm = algorithm
+        self.currentCell = None
+        self.visitedCells = []
+        self.celllist = []
+        self.parentCells = {}
+        self.neighbors = []
+        self.path = []
+        self.backtrack = None
+        self.running = False
+        self.live = False
+
+    def changeAlgorithm(self, algorithm):
+        self.algorithm = algorithm
+
+    def drawAlgorithm(self):
+        
+        if self.currentCell != self.start and self.currentCell != self.goal and self.currentCell != None:
+            self.currentCell.setColor(YELLOW)
+        for n in self.neighbors:
+            if n!= self.start and n!=self.goal and n!=None:
+                n.setColor(PURPLE)
+        
+        #draw path
+        for p in self.path:
+            if p!= self.start and p!=self.goal and p!=None:
+                p.setColor(GREEN)
+
+        #wait a bit
+        time.sleep(0.001)
+
+    def undrawAlgorithm(self):
+
+        #reset colors
+        if self.currentCell != self.start and self.currentCell != self.goal and self.currentCell != None:
+            self.currentCell.resetColor()
+    
+        for n in self.neighbors:
+            if n!= self.start and n!=self.goal and n!=None:
+                n.resetColor()
+        
+    def resume(self):
+        self.running = True
+        self.live = True
+        self.started = True
+
+    def pause(self):
+        self.running = False
+        self.started = False
+
     
 
 class Graph(Board):

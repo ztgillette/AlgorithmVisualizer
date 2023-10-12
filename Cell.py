@@ -9,6 +9,8 @@ class Cell:
         self.y = y
         self.width = width
         self.height = height
+        self.xcoor = int(self.x/self.width)
+        self.ycoor = int(self.y/self.height)
         self.edgeWidth = 1
 
         #colors
@@ -67,6 +69,12 @@ class Cell:
     def makeGoal(self):
         self.goal = True
         self.currColor = RED
+
+    def setColor(self, color):
+        self.currColor = color
+
+    def resetColor(self):
+        self.currColor = self.mainColor
 
 class Node(Cell):
     def __init__(self, window, x=0, y=0, width=20, height=20, color=WHITE):
