@@ -22,9 +22,9 @@ def main():
     board = Board(win, 800, 800, 20, 20, GRAY)
 
     # buttons
-    resetButton = Button(win, board.resetCells, 825, 50, 150, 50, "Reset")
-    randomBoardButton = Button(win, board.fillRandom, 825, 125, 150, 50, "Randomize")
-    playpauseButton = Button(win, board.playpause, 825, 200, 150, 50, "Play / Pause")
+    resetButton = Button(win, board.resetCells, 825, 25, 150, 50, "Reset")
+    randomBoardButton = Button(win, board.fillRandom, 825, 100, 150, 50, "Randomize")
+    playpauseButton = Button(win, board.playpause, 825, 175, 150, 50, "Play / Pause")
 
     # Main game loop
     run = True
@@ -56,7 +56,7 @@ def main():
         
         # Draw game objects here
         # ...
-        board = board.algorithm.BFS(board);
+        board = board.algorithm.DFS(board);
         board.draw()
 
         #draw buttons

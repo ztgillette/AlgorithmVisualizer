@@ -96,6 +96,12 @@ class Board:
         if mycell != None:
             mycell.clicked()
 
+            #remove cell from celllist so it wont stomp on new square
+            #will become a wall, so we don't want it to be a possible choice
+            if(mycell.wall == False and mycell != self.goal and mycell!=self.start):
+                if mycell in self.celllist:
+                    self.celllist.remove(mycell)
+
     def detectMouseUnclick(self):
         self.mousePressed = False
         self.refreshCells()
