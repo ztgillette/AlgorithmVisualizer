@@ -151,12 +151,12 @@ class Algorithms:
                             n.calculateFCost()
 
                         #sort neighbors considering heuristic
-                        board.neighbors.sort(key=lambda x: x.fcost, reverse=False)
+                        # board.neighbors.sort(key=lambda x: x.fcost, reverse=False)
 
                         print(len(board.neighbors))
                         for n in board.neighbors:
                             if n not in board.visitedCells:
-                                board.celllist.append(n)
+                                board.addByPriority(n)
                                 board.parentCells[n] = board.currentCell
                                 board.visitedCells.append(n)
 

@@ -246,6 +246,17 @@ class Board:
         elif(self.clockmax < 175):
             self.clockmax += 5
 
+    #used for A* (makes self.celllist into a priority queue)
+    def addByPriority(self, cell):
+        for i in range(len(self.celllist)):
+            #compare with current cell
+            if cell.fcost <= self.celllist[i].fcost:
+                self.celllist.insert(i, cell)
+                return
+        self.celllist.append(cell)
+        print("curr queue: ")
+        for i in range(len(self.celllist)):
+            print(self.celllist[i].fcost)
     
 
 class Graph(Board):
