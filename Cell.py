@@ -113,11 +113,15 @@ class Node(Cell):
         #edges
         self.drawnedges = []
 
+        #font
+        self.fontsize = 14
+        self.font = pygame.font.SysFont('Arial', self.fontsize)
+
     def draw(self):
         pygame.draw.circle(self.window, self.currColor, (self.x, self.y), self.radius, self.edgeWidth)
         
 
-    def drawEdges(self, neighbors=-1, linecolor=BLACK, linewidth = 3):
+    def drawEdges(self, neighbors=-1, linecolor=BLACK, linewidth = 3, weights=True):
 
         if(neighbors==-1):
             neighbors=self.neighbors
@@ -126,6 +130,8 @@ class Node(Cell):
             #calculate big hipotenuse 
             deltax = abs(self.x-neighbor.x)
             deltay = abs(self.y-neighbor.y)
+            weightx = deltax/2
+            weighty = deltay/2
             hyp = math.sqrt((deltax*deltax) + (deltay*deltay))
 
             minideltax = deltax * self.radius / (hyp+0.1)
@@ -135,33 +141,45 @@ class Node(Cell):
             if(self.x > neighbor.x):
                 newx = self.x - minideltax
                 newx2 = neighbor.x + minideltax
+                weightx += neighbor.x
 
                 #self is below neighbor
                 if(self.y > neighbor.y):
                     newy = self.y - minideltay
                     newy2 = neighbor.y + minideltay
+                    weighty += neighbor.y
                 else:
                     newy = self.y + minideltay
                     newy2 = neighbor.y - minideltay
+                    weighty += self.y
 
 
             #self is to the left of neighbor
             else:
                 newx = self.x + minideltax
                 newx2 = neighbor.x - minideltax
+                weightx += self.x
 
                 #self is below neighbor
                 if(self.y > neighbor.y):
                     newy = self.y - minideltay
                     newy2 = neighbor.y + minideltay
+                    weighty += neighbor.y
                 else:
                     newy = self.y + minideltay
                     newy2 = neighbor.y - minideltay
+                    weighty += self.y
 
             if neighbor not in self.drawnedges:
                 pygame.draw.line(self.window, linecolor, (newx, newy), (newx2, newy2), linewidth)
                 self.drawnedges.append(neighbor)
                 neighbor.drawnedges.append(self)
+
+            if weights:
+                length = math.sqrt((deltax*deltax) + (deltay*deltay))
+                self.text = self.font.render(str(int(length)), True, BLACK)
+                self.window.blit(self.text, (weightx, weighty))
+
 
     def addNeighbor(self, neighbor):
         self.neighbors.append(neighbor) 
