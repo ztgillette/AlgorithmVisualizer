@@ -471,24 +471,31 @@ class Graph(Board):
 
             #if stack empty, see if all nodes have been visited. if not, we need to connect last node with next node
             if(self.getUnvisited(visited) != None):
-                #connect lastvisited with next unvisited node (a.k.a getUnvisited())
+
+                #connect univisited node with closest visited node
+                #find closest visited node
+                nodetovisit = self.getUnvisited(visited)
+                x = nodetovisit.x // int(self.pixelWidth/self.numHorizontalCells)
+                y = nodetovisit.y // int(self.pixelHeight/self.numVerticalCells)
 
                 connected = False
 
-                x = lastvisited.x // int(self.pixelWidth/self.numHorizontalCells)
-                y = lastvisited.y // int(self.pixelHeight/self.numVerticalCells)
+                for z in range(max(self.numHorizontalCells, self.numVerticalCells)):
+                    for a in range(x-1-z, x+2+z):
+                        for b in range(y-1-z, y+2+z):
+                            if(a >= 0 and a < self.numHorizontalCells and b >= 0 and b < self.numVerticalCells and (a != x or b != y)):
+                                if visited[a][b] == 1 and not connected:
+                                    nodetovisit.addNeighbor(self.cell[a][b])
+                                    connected = True
+                                    print("woahhhhhhh")
 
-                for a in range(x-1, x+2):
-                    for b in range(y-1, y+2):
-                        if(a >= 0 and a < self.numHorizontalCells and b >= 0 and b < self.numVerticalCells and (a != x or b != y)):
-                            if visited[a][b] == 0 and not connected:
-                                lastvisited.addNeighbor(self.cell[a][b])
-                                connected = True
-                                print("woahhhhhhh")
-                
+                #this should virtually never happen
                 if not connected:
                     print("gg")
                     lastvisited.addNeighbor(self.getUnvisited(visited))
+
+
+
                     
     def getUnvisited(self, visited):
         for i in range(self.numHorizontalCells):
