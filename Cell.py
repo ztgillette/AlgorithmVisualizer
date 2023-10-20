@@ -10,8 +10,6 @@ class Cell:
         self.y = y
         self.width = width
         self.height = height
-        print(self.y)
-        print(self.height)
         self.xcoor = int(self.x/self.width)
         self.ycoor = int(self.y/self.height)
         self.edgeWidth = 1

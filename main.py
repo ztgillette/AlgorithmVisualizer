@@ -19,21 +19,7 @@ def main():
     pygame.display.set_caption("Algorithm Visualizer")
 
     # Load game assets (if any)
-    #board = Board(win, 800, 800, 50, 50, GRAY)
-    board = Graph(win, 800, 800, 50, 50, GRAY)
-
-    # buttons
-    buttons = []
-    buttons.append(Button(win, board.resetCells, 825, 25, 150, 50, "Reset"))
-    buttons.append(Button(win, board.fillRandom, 825, 100, 150, 50, "Randomize"))
-
-    buttons.append(Button(win, board.playpause, 825, 200, 150, 50, "Play / Pause"))
-    buttons.append(Button(win, board.slowdown, 825, 275, 70, 50, "--Speed"))
-    buttons.append(Button(win, board.speedup, 905, 275, 70, 50, "++Speed"))
-    
-    buttons.append(Button(win, board.setBFS, 825, 375, 150, 50, "BFS", board))
-    buttons.append(Button(win, board.setDFS, 825, 450, 150, 50, "DFS", board))
-    buttons.append(Button(win, board.setASTAR, 825, 525, 150, 50, "A*", board))
+    board = Board(win, 800, 800, 50, 50, GRAY)
 
     # Main game loop
     run = True
@@ -47,7 +33,7 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mosx, mosy = event.pos
                 board.detectMouseClick(mosx,mosy)
-                for button in buttons:
+                for button in board.buttons:
                     button.detectMouseClick(mosx, mosy)
                 
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -64,6 +50,18 @@ def main():
         
         # Draw game objects here
         # ...
+        if(board.modeswitch):
+
+            print(isinstance(board, Board))
+            print(isinstance(board, Graph))
+            if(isinstance(board, Graph)):
+                board = Board(win, 800, 800, 50, 50, GRAY)
+                print("a")
+            else:
+                board = Graph(win, 800, 800, 50, 50, GRAY)
+                print("b")
+            print(isinstance(board, Board))
+            print(isinstance(board, Graph))
 
         if(board.clockcounter >= board.clockmax):
             if board.algo == "BFS":
@@ -82,10 +80,10 @@ def main():
         board.draw()
 
         #draw buttons
-        for button in buttons:
+        for button in board.buttons:
             button.draw()
-        pygame.draw.rect(win, BLACK, (825, 175, 150, 3)) #dividing line
-        pygame.draw.rect(win, BLACK, (825, 350, 150, 3)) #dividing line
+        pygame.draw.rect(win, BLACK, (825, 250, 150, 3)) #dividing line
+        pygame.draw.rect(win, BLACK, (825, 425, 150, 3)) #dividing line
 
         # Update the display
         pygame.display.update()

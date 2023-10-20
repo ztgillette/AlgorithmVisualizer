@@ -3,7 +3,7 @@ import sys
 from Colors import *
 
 class Button:
-    def __init__(self, window, function, x, y, width=150, height=50, buttontext = "Button", obj = None):
+    def __init__(self, window, function, x, y, width=150, height=50, buttontext = "Button", obj = None, mode = "Grid"):
         self.x = x
         self.y = y
         self.width = width
@@ -20,7 +20,7 @@ class Button:
     def draw(self):
 
         #button currently selected
-        if(self.obj != None and self.obj.algo == self.buttontext):
+        if(self.obj != None and (self.obj.algo == self.buttontext or self.obj.mode == self.buttontext)):
             self.color = YELLOW
         else:
             self.color = GRAY

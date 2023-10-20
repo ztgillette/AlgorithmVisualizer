@@ -2,6 +2,7 @@ import random
 import time
 from Cell import *
 from Algorithms import *
+from Button import *
 
 
 class Board:
@@ -23,6 +24,10 @@ class Board:
         self.moseY = 0
         self.clockcounter = 0
         self.clockmax = 60
+        self.modeswitch = False
+        self.mode = "Grid"
+        self.buttons = []
+        self.makeButtons()
 
         #cell list
         self.cell = []
@@ -67,6 +72,21 @@ class Board:
                 self.cell[i][j].draw()
         if self.live:
             self.undrawAlgorithm()
+
+    def makeButtons(self):
+        self.buttons = []
+        self.buttons.append(Button(self.window, self.resetCells, 825, 25, 150, 50, "Reset"))
+        self.buttons.append(Button(self.window, self.fillRandom, 825, 100, 150, 50, "Randomize"))
+        self.buttons.append(Button(self.window, self.switchMode, 825, 175, 70, 50, "Grid", self))
+        self.buttons.append(Button(self.window, self.switchMode, 905, 175, 70, 50, "Graph", self))
+
+        self.buttons.append(Button(self.window, self.playpause, 825, 275, 150, 50, "Play / Pause"))
+        self.buttons.append(Button(self.window, self.slowdown, 825, 350, 70, 50, "--Speed"))
+        self.buttons.append(Button(self.window, self.speedup, 905, 350, 70, 50, "++Speed"))
+        
+        self.buttons.append(Button(self.window, self.setBFS, 825, 450, 150, 50, "BFS", self))
+        self.buttons.append(Button(self.window, self.setDFS, 825, 525, 150, 50, "DFS", self))
+        self.buttons.append(Button(self.window, self.setASTAR, 825, 600, 150, 50, "A*", self))
         
         
 
@@ -253,6 +273,9 @@ class Board:
                 self.celllist.insert(i, cell)
                 return
         self.celllist.append(cell)
+
+    def switchMode(self):
+        self.modeswitch = True
     
 
 class Graph(Board):
@@ -260,9 +283,10 @@ class Graph(Board):
         super().__init__(window, width, height, numXCells, numYCells, cellColor, edgeColor)
 
         self.cellColor = BLACK
-
         self.cell = []
         self.fillRandom()
+        self.mode = "Graph"
+        self.modeswitch = False
 
     def draw(self):
         self.window.fill(self.edgeColor)
@@ -411,8 +435,6 @@ class Graph(Board):
         #while there are unvisited cells, we can't ensure that we are connected
         while(self.getUnvisited(visited) != None):
 
-            print("got 1")
-
             #apply DFS and keep track of if we reach a node
             start = self.getUnvisited(visited)
             stack = [start]
@@ -423,7 +445,6 @@ class Graph(Board):
             lastvisited = start
 
             while(len(stack) > 0):
-                print("got 2")
 
                 node = stack.pop()
                 lastvisited = node
@@ -455,19 +476,13 @@ class Graph(Board):
                 if not connected:
                     lastvisited.addNeighbor(self.getUnvisited(visited))
                     
-
-
-                
-
-                
-
-
-        
-    
     def getUnvisited(self, visited):
         for i in range(self.numHorizontalCells):
             for j in range(self.numVerticalCells):
                 if visited[i][j] == 0:
                     return (self.cell[i][j])
         return None
+    
+    def switchMode(self):
+        self.modeswitch = True
 
