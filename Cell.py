@@ -110,11 +110,14 @@ class Node(Cell):
         self.neighbors = neighbors
         self.edgeWidth = 2
 
+        #edges
+        self.drawnedges = []
+
     def draw(self):
         pygame.draw.circle(self.window, self.currColor, (self.x, self.y), self.radius, self.edgeWidth)
         
 
-    def drawEdges(self, neighbors=-1, linecolor=BLACK):
+    def drawEdges(self, neighbors=-1, linecolor=BLACK, linewidth = 3):
 
         if(neighbors==-1):
             neighbors=self.neighbors
@@ -125,8 +128,8 @@ class Node(Cell):
             deltay = abs(self.y-neighbor.y)
             hyp = math.sqrt((deltax*deltax) + (deltay*deltay))
 
-            minideltax = deltax * self.radius / hyp
-            minideltay = deltay * self.radius / hyp
+            minideltax = deltax * self.radius / (hyp+0.1)
+            minideltay = deltay * self.radius / (hyp+0.1)
 
             #self is to the right of neighbor
             if(self.x > neighbor.x):
@@ -141,7 +144,6 @@ class Node(Cell):
                     newy = self.y + minideltay
                     newy2 = neighbor.y - minideltay
 
-                pygame.draw.line(self.window, linecolor, (newx, newy), (newx2, newy2), 3)
 
             #self is to the left of neighbor
             else:
@@ -156,7 +158,10 @@ class Node(Cell):
                     newy = self.y + minideltay
                     newy2 = neighbor.y - minideltay
 
-                pygame.draw.line(self.window, linecolor, (newx, newy), (newx2, newy2), 3)
+            if neighbor not in self.drawnedges:
+                pygame.draw.line(self.window, linecolor, (newx, newy), (newx2, newy2), linewidth)
+                self.drawnedges.append(neighbor)
+                neighbor.drawnedges.append(self)
 
     def addNeighbor(self, neighbor):
         self.neighbors.append(neighbor) 

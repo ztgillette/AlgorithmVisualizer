@@ -284,15 +284,19 @@ class Graph(Board):
 
         self.cellColor = BLACK
         self.cell = []
+        self.edgeWidth = 3
         self.fillRandom()
         self.mode = "Graph"
-        self.modeswitch = False
 
     def draw(self):
         self.window.fill(self.edgeColor)
         for i in range(self.numHorizontalCells):
             for j in range(self.numVerticalCells):
-                self.cell[i][j].drawEdges()
+                self.cell[i][j].drawEdges(linewidth=self.edgeWidth)
+
+        for i in range(self.numHorizontalCells):
+            for j in range(self.numVerticalCells):
+                self.cell[i][j].drawnedges = []
 
         if self.live:
             self.drawAlgorithm()
@@ -311,7 +315,7 @@ class Graph(Board):
         self.cell = []
 
         #start with some reasonable number of nodes
-        numNodes = random.randint(25,50)
+        numNodes = random.randint(25,75)
 
         #we want nodes to be distributed evenly, so lets divide graph board into numNodes sections
         hor = int(math.sqrt(numNodes * self.pixelWidth / self.pixelHeight))
@@ -321,6 +325,9 @@ class Graph(Board):
         verpixelbox = int(self.pixelHeight/ver)
         self.numHorizontalCells = hor
         self.numVerticalCells = ver
+
+        self.cellWidth = int(30 * (30/numNodes))
+        self.edgeWidth = max(int(3 * (30/numNodes)), 1)
 
         #create nodes within compartments
         for i in range(hor):
@@ -409,7 +416,10 @@ class Graph(Board):
 
         #draw edges in path
         for i in range(len(self.path)-1):
-            self.path[i].drawEdges([self.path[i+1]], ORANGE)
+            self.path[i].drawEdges([self.path[i+1]], ORANGE, linewidth=self.edgeWidth)
+        
+        for i in range(len(self.path)-1):
+            self.path[i].drawnedges = []
 
     def undrawAlgorithm(self):
 
@@ -456,7 +466,7 @@ class Graph(Board):
                     x = neighbor.x // int(self.pixelWidth/self.numHorizontalCells)
                     y = neighbor.y // int(self.pixelHeight/self.numVerticalCells)
                     if visited[x][y] == 0:
-                        stack.append(neighbor)
+                        stack.insert(0, neighbor)
                         visited[x][y] = 1
 
             #if stack empty, see if all nodes have been visited. if not, we need to connect last node with next node
@@ -465,15 +475,19 @@ class Graph(Board):
 
                 connected = False
 
-                for neighbor in lastvisited.neighbors:
-                    x = neighbor.x // int(self.pixelWidth/self.numHorizontalCells)
-                    y = neighbor.y // int(self.pixelHeight/self.numVerticalCells)
+                x = lastvisited.x // int(self.pixelWidth/self.numHorizontalCells)
+                y = lastvisited.y // int(self.pixelHeight/self.numVerticalCells)
 
-                    if visited[x][y] == 0 and not connected:
-                        lastvisited.addNeighbor(self.cell[x][y])
-                        connected = True
+                for a in range(x-1, x+2):
+                    for b in range(y-1, y+2):
+                        if(a >= 0 and a < self.numHorizontalCells and b >= 0 and b < self.numVerticalCells and (a != x or b != y)):
+                            if visited[a][b] == 0 and not connected:
+                                lastvisited.addNeighbor(self.cell[a][b])
+                                connected = True
+                                print("woahhhhhhh")
                 
                 if not connected:
+                    print("gg")
                     lastvisited.addNeighbor(self.getUnvisited(visited))
                     
     def getUnvisited(self, visited):
@@ -482,7 +496,4 @@ class Graph(Board):
                 if visited[i][j] == 0:
                     return (self.cell[i][j])
         return None
-    
-    def switchMode(self):
-        self.modeswitch = True
 

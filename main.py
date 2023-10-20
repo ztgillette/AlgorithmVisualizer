@@ -52,16 +52,10 @@ def main():
         # ...
         if(board.modeswitch):
 
-            print(isinstance(board, Board))
-            print(isinstance(board, Graph))
             if(isinstance(board, Graph)):
                 board = Board(win, 800, 800, 50, 50, GRAY)
-                print("a")
             else:
                 board = Graph(win, 800, 800, 50, 50, GRAY)
-                print("b")
-            print(isinstance(board, Board))
-            print(isinstance(board, Graph))
 
         if(board.clockcounter >= board.clockmax):
             if board.algo == "BFS":
