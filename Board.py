@@ -364,6 +364,9 @@ class Graph(Board):
         self.start.makeStart()
         self.goal.makeGoal()
 
+        #make sure graph is connected
+        self.makeConnected()
+
     def getNeighbors(self, cell):
         return cell.neighbors
     
@@ -395,5 +398,76 @@ class Graph(Board):
                 n.resetColor()
 
 
+    #sometimes fillRandom() makes 
+    def makeConnected(self):
+    
+        visited = []
+        for i in range(self.numHorizontalCells):
+            row = []
+            for j in range(self.numVerticalCells):
+                row.append(0)
+            visited.append(row)
+
+        #while there are unvisited cells, we can't ensure that we are connected
+        while(self.getUnvisited(visited) != None):
+
+            print("got 1")
+
+            #apply DFS and keep track of if we reach a node
+            start = self.getUnvisited(visited)
+            stack = [start]
+            x = start.x // int(self.pixelWidth/self.numHorizontalCells)
+            y = start.y // int(self.pixelHeight/self.numVerticalCells)
+            visited[x][y] = 1
+
+            lastvisited = start
+
+            while(len(stack) > 0):
+                print("got 2")
+
+                node = stack.pop()
+                lastvisited = node
+
+                #get neighbors
+                neighbors = node.neighbors
+
+                for neighbor in neighbors:
+                    x = neighbor.x // int(self.pixelWidth/self.numHorizontalCells)
+                    y = neighbor.y // int(self.pixelHeight/self.numVerticalCells)
+                    if visited[x][y] == 0:
+                        stack.append(neighbor)
+                        visited[x][y] = 1
+
+            #if stack empty, see if all nodes have been visited. if not, we need to connect last node with next node
+            if(self.getUnvisited(visited) != None):
+                #connect lastvisited with next unvisited node (a.k.a getUnvisited())
+
+                connected = False
+
+                for neighbor in lastvisited.neighbors:
+                    x = neighbor.x // int(self.pixelWidth/self.numHorizontalCells)
+                    y = neighbor.y // int(self.pixelHeight/self.numVerticalCells)
+
+                    if visited[x][y] == 0 and not connected:
+                        lastvisited.addNeighbor(self.cell[x][y])
+                        connected = True
+                
+                if not connected:
+                    lastvisited.addNeighbor(self.getUnvisited(visited))
                     
+
+
+                
+
+                
+
+
+        
+    
+    def getUnvisited(self, visited):
+        for i in range(self.numHorizontalCells):
+            for j in range(self.numVerticalCells):
+                if visited[i][j] == 0:
+                    return (self.cell[i][j])
+        return None
 
