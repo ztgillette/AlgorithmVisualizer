@@ -115,9 +115,10 @@ class Board:
 
     def resetCells(self):
         self.resetAlgorithm(self.algorithm)
-        for i in range(self.numHorizontalCells):
-            for j in range(self.numVerticalCells):
-                self.cell[i][j].reset()
+        if(len(self.cell) > 0):
+            for i in range(self.numHorizontalCells):
+                for j in range(self.numVerticalCells):
+                    self.cell[i][j].reset()
 
     def fillRandom(self):
         self.resetCells()
@@ -170,8 +171,6 @@ class Board:
         if self.checkValidCell(cell, 1, 1) and self.allowDiagonals:
             neighbors.append(self.cell[x+1][y+1])
 
-        print("num neighbors: " + str(len(neighbors)))
-
         return neighbors
         
     def resetAlgorithm(self, algorithm=Algorithms()):
@@ -201,7 +200,7 @@ class Board:
         #draw path
         for p in self.path:
             if p!= self.start and p!=self.goal and p!=None:
-                p.setColor(GREEN)
+                p.setColor(ORANGE)
 
     def undrawAlgorithm(self):
 
@@ -254,11 +253,147 @@ class Board:
                 self.celllist.insert(i, cell)
                 return
         self.celllist.append(cell)
-        print("curr queue: ")
-        for i in range(len(self.celllist)):
-            print(self.celllist[i].fcost)
     
 
 class Graph(Board):
-   def init(self):
-      pass
+    def __init__(self, window, width, height, numXCells, numYCells, cellColor = BLACK, edgeColor = DARK_GRAY):
+        super().__init__(window, width, height, numXCells, numYCells, cellColor, edgeColor)
+
+        self.cellColor = BLACK
+
+        self.cell = []
+        self.fillRandom()
+
+    def draw(self):
+        self.window.fill(self.edgeColor)
+        for i in range(self.numHorizontalCells):
+            for j in range(self.numVerticalCells):
+                self.cell[i][j].drawEdges()
+
+        if self.live:
+            self.drawAlgorithm()
+        for i in range(self.numHorizontalCells):
+            for j in range(self.numVerticalCells):
+                self.cell[i][j].draw()
+                
+        if self.live:
+            self.undrawAlgorithm()
+
+    def fillRandom(self):
+
+        #clear current
+        self.resetCells()
+        self.path = []
+        self.cell = []
+
+        #start with some reasonable number of nodes
+        numNodes = random.randint(25,50)
+
+        #we want nodes to be distributed evenly, so lets divide graph board into numNodes sections
+        hor = int(math.sqrt(numNodes * self.pixelWidth / self.pixelHeight))
+        ver = int(numNodes/hor)
+        numNodes = int(hor*ver)
+        horpixelbox = int(self.pixelWidth/hor)
+        verpixelbox = int(self.pixelHeight/ver)
+        self.numHorizontalCells = hor
+        self.numVerticalCells = ver
+
+        #create nodes within compartments
+        for i in range(hor):
+
+            row=[]
+        
+            for j in range(ver):
+
+                #x window is i*horpixelbox - (i+1)horpixelbox-1
+                newcellx = random.randint(i*horpixelbox + self.cellWidth//2, (i+1)*horpixelbox-1 - self.cellWidth//2) 
+                newcelly = random.randint(j*verpixelbox + self.cellWidth//2, (j+1)*verpixelbox-1 - self.cellWidth//2)
+
+                newnode = Node(self.window, newcellx, newcelly, [],
+                                    self.cellWidth, self.cellHeight, self.cellColor)
+                
+                row.append(newnode)
+            
+            self.cell.append(row)
+
+        #create edges
+        for i in range(hor):
+            for j in range(ver):
+
+                #recalculate x and y
+                x = self.cell[i][j].x // horpixelbox
+                y = self.cell[i][j].y // verpixelbox
+
+                #only assign neighbors if even, even (all else will get by association)
+                if x%2==0 and y%2==0:
+
+                    for a in range(x-1, x+2):
+                        for b in range(y-1, y+2):
+
+                            if(a >= 0 and a < hor and b >= 0 and b < ver and (a != x or b != y)):
+
+                                #random num
+                                odds = random.randint(0,1)
+
+                                if(odds == 0):
+                                    self.cell[i][j].addNeighbor(self.cell[a][b])
+        
+        #connect disconnected nodes
+        for i in range(hor):
+            for j in range(ver):
+                if self.cell[i][j].getNumNeighbors() == 0:
+                    
+                    #make a list of all possible neighbors
+                    possibleNeighbors = []
+
+                    #recalculate x and y
+                    x = self.cell[i][j].x // horpixelbox
+                    y = self.cell[i][j].y // verpixelbox
+
+                    for a in range(x-1, x+2):
+                        for b in range(y-1, y+2):
+                            if(a >= 0 and a < hor and b >= 0 and b < ver and (a != x or b != y)):
+                                possibleNeighbors.append((a, b))
+
+                    #pick one of the possible neighbors at random
+                    nx, ny = possibleNeighbors[random.randint(0, len(possibleNeighbors)-1)]
+                    self.cell[i][j].addNeighbor(self.cell[nx][ny])
+
+        self.start = self.cell[0][0]
+        self.goal = self.cell[hor-1][ver-1]
+        self.start.makeStart()
+        self.goal.makeGoal()
+
+    def getNeighbors(self, cell):
+        return cell.neighbors
+    
+    def drawAlgorithm(self):
+        
+        if self.currentCell != self.start and self.currentCell != self.goal and self.currentCell != None:
+            self.currentCell.setColor(YELLOW)
+        for n in self.neighbors:
+            if n!= self.start and n!=self.goal and n!=None:
+                n.setColor(PURPLE)
+        
+        #draw path
+        for p in self.path:
+            if p!= self.start and p!=self.goal and p!=None:
+                p.setColor(ORANGE)
+
+        #draw edges in path
+        for i in range(len(self.path)-1):
+            self.path[i].drawEdges([self.path[i+1]], ORANGE)
+
+    def undrawAlgorithm(self):
+
+        #reset colors
+        if self.currentCell != self.start and self.currentCell != self.goal and self.currentCell != None:
+            self.currentCell.resetColor()
+    
+        for n in self.neighbors:
+            if n!= self.start and n!=self.goal and n!=None:
+                n.resetColor()
+
+
+                    
+

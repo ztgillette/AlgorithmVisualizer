@@ -19,7 +19,8 @@ def main():
     pygame.display.set_caption("Algorithm Visualizer")
 
     # Load game assets (if any)
-    board = Board(win, 800, 800, 50, 50, GRAY)
+    #board = Board(win, 800, 800, 50, 50, GRAY)
+    board = Graph(win, 800, 800, 50, 50, GRAY)
 
     # buttons
     buttons = []

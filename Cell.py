@@ -10,6 +10,8 @@ class Cell:
         self.y = y
         self.width = width
         self.height = height
+        print(self.y)
+        print(self.height)
         self.xcoor = int(self.x/self.width)
         self.ycoor = int(self.y/self.height)
         self.edgeWidth = 1
@@ -40,10 +42,8 @@ class Cell:
             
             if(self.currColor == self.mainColor) and not self.recentlyClicked:
                 self.makeWall()
-                print("walled!!")
             elif not self.recentlyClicked and not held:
                 self.makeEmpty()
-                print("destroyed")
 
             self.recentlyClicked = True
 
@@ -104,11 +104,74 @@ class Cell:
 
 
 class Node(Cell):
-    def __init__(self, window, x=0, y=0, width=20, height=20, color=WHITE):
+    def __init__(self, window, x=0, y=0, neighbors=[], width=20, height=20, color=WHITE):
         super().__init__(window, x, y, width, height, color)
         
         #dimensions 
         self.radius = width
+        self.neighbors = neighbors
+        self.edgeWidth = 2
 
     def draw(self):
         pygame.draw.circle(self.window, self.currColor, (self.x, self.y), self.radius, self.edgeWidth)
+        
+
+    def drawEdges(self, neighbors=-1, linecolor=BLACK):
+
+        if(neighbors==-1):
+            neighbors=self.neighbors
+
+        for neighbor in neighbors:
+            #calculate big hipotenuse 
+            deltax = abs(self.x-neighbor.x)
+            deltay = abs(self.y-neighbor.y)
+            hyp = math.sqrt((deltax*deltax) + (deltay*deltay))
+
+            minideltax = deltax * self.radius / hyp
+            minideltay = deltay * self.radius / hyp
+
+            #self is to the right of neighbor
+            if(self.x > neighbor.x):
+                newx = self.x - minideltax
+                newx2 = neighbor.x + minideltax
+
+                #self is below neighbor
+                if(self.y > neighbor.y):
+                    newy = self.y - minideltay
+                    newy2 = neighbor.y + minideltay
+                else:
+                    newy = self.y + minideltay
+                    newy2 = neighbor.y - minideltay
+
+                pygame.draw.line(self.window, linecolor, (newx, newy), (newx2, newy2), 3)
+
+            #self is to the left of neighbor
+            else:
+                newx = self.x + minideltax
+                newx2 = neighbor.x - minideltax
+
+                #self is below neighbor
+                if(self.y > neighbor.y):
+                    newy = self.y - minideltay
+                    newy2 = neighbor.y + minideltay
+                else:
+                    newy = self.y + minideltay
+                    newy2 = neighbor.y - minideltay
+
+                pygame.draw.line(self.window, linecolor, (newx, newy), (newx2, newy2), 3)
+
+    def addNeighbor(self, neighbor):
+        self.neighbors.append(neighbor) 
+        neighbor.neighbors.append(self)
+
+    def removeNeighbor(self, neighbor):
+        self.neighbors.remove(neighbor)
+        neighbor.neighbors.remove(self)
+
+    def getNumNeighbors(self):
+        return len(self.neighbors)
+    
+    def isNeighbor(self, neighbor):
+        if neighbor in self.neighbors:
+            return True
+        return False

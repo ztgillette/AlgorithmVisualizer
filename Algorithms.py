@@ -37,7 +37,7 @@ class Algorithms:
 
                         #get neighbors
                         board.neighbors = board.getNeighbors(board.currentCell)
-                        print(len(board.neighbors))
+                      
                         for n in board.neighbors:
                             if n not in board.visitedCells:
                                 board.celllist.append(n)
@@ -90,7 +90,7 @@ class Algorithms:
 
                         #get neighbors
                         board.neighbors = board.getNeighbors(board.currentCell)
-                        print(len(board.neighbors))
+                      
                         for n in board.neighbors:
                             if n not in board.visitedCells:
                                 board.celllist.append(n)
@@ -153,7 +153,7 @@ class Algorithms:
                         #sort neighbors considering heuristic
                         # board.neighbors.sort(key=lambda x: x.fcost, reverse=False)
 
-                        print(len(board.neighbors))
+                       
                         for n in board.neighbors:
                             if n not in board.visitedCells:
                                 board.addByPriority(n)

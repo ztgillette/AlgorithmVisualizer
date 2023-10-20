@@ -4,6 +4,7 @@ RED = (255,0,0)
 GRAY = (200,200,200)
 DARK_GRAY = (100,100,100)
 GREEN = (0,255,0)
+ORANGE = (255, 165, 0)
 
 #neighbors
 PURPLE = (0,0,255)
