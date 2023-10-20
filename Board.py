@@ -287,6 +287,7 @@ class Graph(Board):
         self.edgeWidth = 3
         self.fillRandom()
         self.mode = "Graph"
+        self.selectedCell = None
 
     def draw(self):
         self.window.fill(self.edgeColor)
@@ -487,20 +488,51 @@ class Graph(Board):
                                 if visited[a][b] == 1 and not connected:
                                     nodetovisit.addNeighbor(self.cell[a][b])
                                     connected = True
-                                    print("woahhhhhhh")
 
                 #this should virtually never happen
                 if not connected:
-                    print("gg")
                     lastvisited.addNeighbor(self.getUnvisited(visited))
 
 
-
-                    
     def getUnvisited(self, visited):
         for i in range(self.numHorizontalCells):
             for j in range(self.numVerticalCells):
                 if visited[i][j] == 0:
                     return (self.cell[i][j])
+        return None
+    
+    def detectMouseClick(self, x, y):
+        self.mousePressed = True
+        self.selectedCell = self.findCellAtPixelCoors(x,y)
+        
+    def detectMouseUnclick(self):
+        self.mousePressed = False
+        self.selectedCell = None
+
+    def detectMouseHover(self):
+        x, y = pygame.mouse.get_pos()
+    
+        # Display mouse coordinates in window title
+
+        self.mouseX = x
+        self.mouseY = y
+            
+        #move cell
+        if self.selectedCell != None:
+            self.selectedCell.x = x
+            self.selectedCell.y = y
+
+
+    def findCellAtPixelCoors(self, x, y):
+
+        for i in range(self.numHorizontalCells):
+            for j in range(self.numVerticalCells):
+
+                cellx = self.cell[i][j].x - self.cellWidth
+                celly = self.cell[i][j].y - self.cellWidth
+
+                if x > cellx and x < cellx+(self.cellWidth * 2) and y > celly and y < celly+(self.cellWidth*2):
+                    return self.cell[i][j]
+                
         return None
 
